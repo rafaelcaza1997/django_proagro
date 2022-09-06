@@ -82,7 +82,7 @@ def criar_lista_cadastros(cadastros):
         cadastro['data_colheita'] = cadastro['data_colheita'].strftime("%d/%m/%Y")
         temp_cpf = cadastro["cpf_produtor"]
         cadastro['cpf_produtor'] = '{}.{}.{}-{}'.format(temp_cpf[:3], temp_cpf[3:6], temp_cpf[6:9], temp_cpf[9:])
-        cadastro['evento'] = dict_icons[cadastro['evento']]
+        cadastro['evento_icone'] = dict_icons[cadastro['evento']]
     return dict_cadastros
         
 def listar_cadastros(request):

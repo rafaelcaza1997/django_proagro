@@ -1,6 +1,21 @@
 {% extends 'proagro_app/base.html' %}
 
 {% block content %}
-<h3>"Teste"</h3>
+
+    <div class="position-relative overflow-hidden p-3 p-md-5 m-md-3 text-center bg-light">
+        <div class="col-md-5 p-lg-5 mx-auto my-5">
+          <h1 class="display-4 fw-normal">ProAgro</h1>
+          <br>
+          <p class="lead fw-normal">O Proagro Fácil é um sistema da Softfocus que facilita o gerenciamento de
+            Proagro (Programa de Garantia da Atividade Agropecuária). O Proagro é um
+            programa administrado pelo Banco Central do Brasil, que visa exonerar o produtor
+            rural de obrigações financeiras relativas a operações de crédito, em casos de
+            ocorrência de perdas nas lavouras.</p>
+          <a class="btn btn-outline-secondary" href="{% url 'view_proagro:listar_cadastros' %}">Visualizar Cadastros</a>
+          <a class="btn btn-outline-secondary" href="{% url 'view_proagro:novo_cadastro' %}">Realizar Novo Cadastro</a>
+        </div>
+        <div class="product-device shadow-sm d-none d-md-block"></div>
+        <div class="product-device product-device-2 shadow-sm d-none d-md-block"></div>
+    </div>
 
 {% endblock %}

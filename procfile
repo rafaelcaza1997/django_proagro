@@ -1,0 +1,1 @@
+web: gunicorn proagro_project.wsgi --log-file -
