@@ -14,59 +14,62 @@ def checar_distancia(lat_a,lon_a,lat_b,lon_b):
 
 def novo_cadastro(request):
     if request.method == 'POST':
-            '''Cria um dicionario para a adição dos valores, adiciona um valor padrão ao status da solicitação'''
-            dict_form = {"status" : "Aguardando"}
-            for key, value in request.POST.items():
-                '''Verifica se o input possui algum valor vazio. Esse verificação já é feita no front, mas por garantia tambem está sendo feita no backend.'''
-                if value != "":
-                    dict_form[key] = value
-                else:
-                    return render(request, 'proagro_app/novo_cadastro.html',{'modal_msg':"Todos os campos precisam ser preenchidos!"})
+        '''Cria um dicionario para a adição dos valores, adiciona um valor padrão ao status da solicitação'''
+        dict_form = {"status" : "Aguardando"}
+        for key, value in request.POST.items():
+            '''Verifica se o input possui algum valor vazio. Esse verificação já é feita no front, mas por garantia tambem está sendo feita no backend.'''
+            if value != "":
+                dict_form[key] = value
+            else:
+                return render(request, 'proagro_app/novo_cadastro.html',{'modal_msg':"Todos os campos precisam ser preenchidos!"})
+
+
+        '''Realiza o tratamento de valores, caso resulte em erro, o programa avisa o usuario.
+        Esse erro dificilmente seria causado pelo uso no frontend, pois a validação do CPF já está sendo feita antes de chegar nesse ponto, e a entrada da data não é feita de maneira "escrita".
+        '''   
+        try:
+            dict_form_validado = DictCadastro(**dict_form)
+        except ValidationError as e:
+            return render(request, 'proagro_app/novo_cadastro.html',{'modal_msg':e})
         
-            '''Realiza o tratamento de valores, caso resulte em erro, o programa avisa o usuario.
-            Esse erro dificilmente seria causado pelo uso no frontend, pois a validação do CPF já está sendo feita antes de chegar nesse ponto, e a entrada da data não é feita de maneira "escrita".
-            '''   
-            try:
-                dict_form_validado = DictCadastro(**dict_form)
-            except ValidationError as e:
-                return render(request, 'proagro_app/novo_cadastro.html',{'modal_msg':e})
-            
-            try:
-                colheita_mesma_data = Cadastro.objects.all().filter(data_colheita = dict_form_validado.data_colheita)
-                for colheita in colheita_mesma_data:
-                    lat_a = dict_form_validado.lat_lavoura
-                    lon_a = dict_form_validado.long_lavoura
-                    
-                    lat_b = colheita.lat_lavoura
-                    lon_b = colheita.long_lavoura
-                    
-                    if checar_distancia(lat_a,lon_a,lat_b,lon_b) <= 10:
-                        if dict_form_validado.evento != colheita.evento:
-                            return render(request, 'proagro_app/novo_cadastro.html',{'modal_msg':f"Um cadastro foi localizado com a mesma data de colheita, a menos de 10 km da propriedade atual, com eventos divergentes. CPF do produtor {colheita.cpf_produtor}"})
-            except:
-                '''Nenhuma colheita foi feita nessa data'''
-                pass
-            
-            '''caso esteja tudo ok, um novo registro será criado, caso contrario, o usuario será notificado.'''
-            try:
-                cadastro = Cadastro()
-                cadastro.nome_produtor = dict_form_validado.nome_produtor
-                cadastro.email_produtor = dict_form_validado.email_produtor
-                cadastro.cpf_produtor = dict_form_validado.cpf_produtor
-                cadastro.lat_lavoura = dict_form_validado.lat_lavoura
-                cadastro.long_lavoura = dict_form_validado.long_lavoura
-                cadastro.tipo_lavoura = dict_form_validado.tipo_lavoura
-                cadastro.data_colheita = dict_form_validado.data_colheita
-                cadastro.evento = dict_form_validado.evento
-                cadastro.status = dict_form_validado.status
-                cadastro.id_analista = 1
-                cadastro.save()    
-                return render(request, 'proagro_app/novo_cadastro.html',{'modal_msg':"Cadastro realizado com sucesso!"})
-            except Exception as e:
-                return render(request, 'proagro_app/novo_cadastro.html',{'modal_msg':e})
+        try:
+            colheita_mesma_data = Cadastro.objects.all().filter(data_colheita = dict_form_validado.data_colheita)
+            for colheita in colheita_mesma_data:
+                lat_a = dict_form_validado.lat_lavoura
+                lon_a = dict_form_validado.long_lavoura
+                
+                lat_b = colheita.lat_lavoura
+                lon_b = colheita.long_lavoura
+                
+                if checar_distancia(lat_a,lon_a,lat_b,lon_b) <= 10:
+                    if dict_form_validado.evento != colheita.evento:
+                        return render(request, 'proagro_app/novo_cadastro.html',{'modal_msg':f"Um cadastro foi localizado com a mesma data de colheita, a menos de 10 km da propriedade atual, com eventos divergentes. CPF do produtor {colheita.cpf_produtor}"})
+        except:
+            '''Nenhuma colheita foi feita nessa data'''
+            pass
+        
+        '''caso esteja tudo ok, um novo registro será criado, caso contrario, o usuario será notificado.'''
+        try:
+            cadastro = Cadastro()
+            cadastro.nome_produtor = dict_form_validado.nome_produtor
+            cadastro.email_produtor = dict_form_validado.email_produtor
+            cadastro.cpf_produtor = dict_form_validado.cpf_produtor
+            cadastro.lat_lavoura = dict_form_validado.lat_lavoura
+            cadastro.long_lavoura = dict_form_validado.long_lavoura
+            cadastro.tipo_lavoura = dict_form_validado.tipo_lavoura
+            cadastro.data_colheita = dict_form_validado.data_colheita
+            cadastro.evento = dict_form_validado.evento
+            cadastro.status = dict_form_validado.status
+            cadastro.id_analista = 1
+            cadastro.save(force_insert=True)    
+            return render(request, 'proagro_app/novo_cadastro.html',{'modal_msg':"Cadastro realizado com sucesso!"})
+        except Exception as e:
+            return render(request, 'proagro_app/novo_cadastro.html',{'modal_msg':e})
     else:
         return render(request, 'proagro_app/novo_cadastro.html')
-        
+    
+# p = Cadastro(first_name="Bruce", last_name="Springsteen")
+# p.save(force_insert=True)
         
 def criar_lista_cadastros(cadastros):
     dict_cadastros = [cadastro for cadastro in cadastros.values()]
