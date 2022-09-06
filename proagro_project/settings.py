@@ -84,16 +84,26 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': os.environ.get('DB_NAME', 'proagro'),
-        'USER': os.environ.get('DB_USER', 'postgres'),
-        'PASSWORD': os.environ.get('DB_PASS', '55210896'),
-        'HOST': 'localhost',
+        'USER': os.environ.get('DB_USER', 'kdbdidnryvtkbm'),
+        'PASSWORD': os.environ.get('DB_PASS', 'e06ca1afc0a4756c2a20ccb36dbf642c4cb51bcafc143f374365578d08df8a02'),
+        'HOST': 'ec2-52-73-155-171.compute-1.amazonaws.com',
         'PORT': '5432',
     }
 }
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': os.environ.get('DB_NAME', 'proagro'),
+#         'USER': os.environ.get('DB_USER', 'postgres'),
+#         'PASSWORD': os.environ.get('DB_PASS', '55210896'),
+#         'HOST': 'localhost',
+#         'PORT': '5432',
+#     }
+# }
 
 db_from_env = dj_database_url.config(conn_max_age=600)
 DATABASES['default'].update(db_from_env)
 
+# PGUSER=postgres PGPASSWORD=55210896 heroku pg:push postgres://localhost/5432  postgresql-rectangular-37335
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
