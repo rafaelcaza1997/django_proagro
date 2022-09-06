@@ -1,0 +1,199 @@
+{% extends 'proagro_app/base.html' %}
+
+{% block content %}
+
+
+<div class = "container col-lg-6 col-md-8 col-sm-10">
+  
+<form method="post" name="form_cadastro">
+  {% csrf_token %}
+  <div class="row">
+    <div class="form-group required col-md-8">
+      <label for="inputNome">Nome</label>
+      <input type="text" class="form-control" id="inputNome" name = "nome_produtor" placeholder="Nome" />
+    </div>
+    <div class="form-group required col-md-4">
+      <label for="inputCPF">CPF</label>
+      <input type="text" class="form-control" id="inputCPF" name = "cpf_produtor" placeholder="CPF" />
+    </div>
+  </div>
+
+    <div class="row">
+      <div class="form-group required col-md-6">
+        <label for="inputEmail">Email</label>
+        <input type="text" class="form-control" id="inputEmail" name = "email_produtor" placeholder="Email" />
+      </div>
+      <div class="form-group required col-md-6">
+        <label for="inputConfEmail">Confirmar Email</label>
+        <input type="text" class="form-control" id="inputConfEmail" name = "confi_email_produtor" placeholder="Confirmar Email" />
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="form-group required col-md-4">
+        <label for="inputTipo">Tipo Lavoura</label>
+        <input type="text" class="form-control" id="inputTipo" name = "tipo_lavoura" placeholder="Milho, Soja, Trigo..." />
+      </div>
+
+      <div class="form-group required col-md-4">
+        <label for="inputEvento">Evento</label>
+        <select id="inputEvento" name = "evento" class="form-control" />
+          <option selected>Evento...</option>
+          <option>CHUVA EXCESSIVA</option>
+          <option>GEADA</option>
+          <option>GRANIZO</option>
+          <option>SECA</option>
+          <option>VENDAVAL</option>
+          <option>RAIO</option>
+        </select>
+      </div>
+
+      <div class="form-group required col-md-4">
+        <label for="inputData">Data Colheita</label>
+        <input id="inputData" name = "data_colheita" class="form-control" type="date" />
+      </div>
+    </div>
+
+    
+
+    <div class="row">
+      <div class="form-group required col-md-4">
+        <label for="inputLat">Latitude</label>
+        <input type="text" class="form-control" id="inputLat" name = "lat_lavoura" placeholder="-00.00000" />
+      </div>
+      <div class="form-group required col-md-4">
+        <label for="inputLong">Longitude</label>
+        <input type="text" class="form-control" id = "inputLong" name="long_lavoura" placeholder="-00.00000" />
+      </div>
+    </div>
+
+
+    <br>
+    <button type="button" class="btn btn-primary" onclick="validar_form()">Salvar</button>
+
+  </form>
+
+</div>
+  
+{% endblock %}
+
+
+{% block script %}
+
+<script>
+
+
+
+  
+
+
+function validar_form(){
+
+  var FormValido = true;
+  const cpf = document.getElementById("inputCPF").value;
+  const email = document.getElementById("inputEmail").value;
+  const conf_email = document.getElementById("inputConfEmail").value;
+  
+  
+  if (checar_required() == false)
+  {
+    FormValido = false;
+    bootbox.alert("Todos os campos precisam ser preenchidos!");
+    return
+  }
+  if (validar_cpf(cpf) == false)
+  {
+    FormValido = false;
+    bootbox.alert("CPF inserido é inválido!");
+    return
+  }
+
+  if (validar_email(email) == false)
+  {
+    FormValido = false;
+    bootbox.alert("E-mail inserido é inválido!");
+    return
+  }
+  if (email.localeCompare(conf_email) != 0)
+  {
+    FormValido = false;
+    bootbox.alert("E-mail de confirmação não é igual ao e-mail inserido!");
+    return
+  }
+
+  if (FormValido == true)
+  {
+    document.form_cadastro.submit();
+  }
+}
+
+
+function validar_cpf(strCPF) {
+
+  const numCPF = strCPF.replace(/\./g, "").replace(/\-/g, "");
+  var Soma;
+  var Resto;
+
+  if (numCPF == "00000000000") 
+  {
+    return false;
+  }
+  Soma = 0;
+  for (i=1; i<=9; i++) 
+  {
+    Soma = Soma + parseInt(numCPF.substring(i-1, i)) * (11 - i);
+  }
+  Resto = (Soma * 10) % 11;
+
+  if ((Resto == 10) || (Resto == 11))  
+  {
+    Resto = 0;
+  }
+  if (Resto != parseInt(numCPF.substring(9, 10))) 
+  {
+    return false;
+  }
+
+  Soma = 0;
+  for (i = 1; i <= 10; i++) 
+  {
+    Soma = Soma + parseInt(numCPF.substring(i-1, i)) * (12 - i);
+  }
+  Resto = (Soma * 10) % 11;
+
+  if ((Resto == 10) || (Resto == 11))  
+  {
+    Resto = 0;
+  }
+  if (Resto != parseInt(numCPF.substring(10, 11)))
+  {
+    return false;
+  }
+
+  return true;
+  }
+
+function validar_email(strEmail){
+  var re = /\S+@\S+\.\S+/;
+  return re.test(strEmail);
+}
+
+function checar_required() {
+  var fields = $('.required').find('select, textarea, input').serializeArray();
+  var FormValido = true;
+
+
+  $.each(fields, function (i, field) {
+    console.log(field.value);
+    if (field.value == '') 
+    {
+      FormValido = false;
+    }
+  });
+  return FormValido;
+}
+
+</script>
+
+{% endblock %}
+  

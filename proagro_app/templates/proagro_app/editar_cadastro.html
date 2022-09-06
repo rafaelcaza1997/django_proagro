@@ -1,0 +1,135 @@
+{% extends 'proagro_app/base.html' %}
+
+{% block content %}
+
+
+<div class = "container col-lg-6 col-md-8 col-sm-10">
+  
+<form method="post" name = "form_editar">
+  {% csrf_token %}
+  <div class="row">
+    <div class="form-group col-md-8">
+      <label for="inputNome">Nome</label>
+      <input type="text" class="form-control" id="inputNome" name = "nome_produtor" required>
+    </div>
+    <div class="form-group col-md-4">
+      <label for="inputCPF">CPF</label>
+      <input type="text" class="form-control" id="inputCPF" name = "cpf_produtor" disabled >
+    </div>
+  </div>
+
+    <div class="row">
+      <div class="form-group col-md-6">
+        <label for="inputEmail">Email</label>
+        <input type="email" class="form-control" id="inputEmail" name = "email_produtor" required>
+      </div>
+      <div class="form-group col-md-6">
+        <label for="inputConfEmail">Confirmar Email</label>
+        <input type="email" class="form-control" id="inputConfEmail" name = "confi_email_produtor"  required>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="form-group col-md-4">
+        <label for="inputTipo">Tipo Lavoura</label>
+        <input type="text" class="form-control" id="inputTipo" name = "tipo_lavoura" required>
+      </div>
+
+
+
+      <div class="form-group col-md-4">
+        <label for="inputEvento">Evento</label>
+        <select id="inputEvento" name = "evento" class="form-control" required>
+          <option value = "CHUVA EXCESSIVA">CHUVA EXCESSIVA</option>
+          <option value = "GEADA">GEADA</option>
+          <option value = "GRANIZO">GRANIZO</option>
+          <option value = "SECA">SECA</option>
+          <option value = "VENDAVAL">VENDAVAL</option>
+          <option value = "RAIO">RAIO</option>
+        </select>
+      </div>
+
+      <div class="form-group col-md-4">
+        <label for="inputData">Data Colheita</label>
+        <input id="inputData" name = "data_colheita" class="form-control" type="date">
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="form-group col-md-4">
+        <label for="inputLat">Latitude</label>
+        <input type="text" class="form-control" id="inputLat" name = "lat_lavoura" required>
+      </div>
+      <div class="form-group col-md-4">
+        <label for="inputLong">Longitude</label>
+        <input type="text" class="form-control" id="inputLong" name="long_lavoura" required>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="form-group col-md-4">
+        <label for="inputStatus">Status</label>
+          <select id="inputStatus" name = "status" class="form-control" required>
+            <option value = "Aguardando">Aguardando</option>
+            <option value = "Negado">Negado</option>
+            <option value = "Glosa parcial">Glosa parcial</option>
+            <option value = "Aprovado">Aprovado</option>
+          </select>
+        </div>
+      </div>
+    <br>
+    
+    <button type="button" class="btn btn-primary" onclick="confirmar_alteracoes_modal({{cadastro.id}})">Salvar</button>
+
+  </form>
+
+</div>
+  
+{% endblock %}
+  
+
+{% block script %} 
+<script>
+  
+  window.onload = function () {    
+    document.getElementById("inputEvento").value = "{{ cadastro.evento }}";
+    document.getElementById("inputStatus").value = "{{ cadastro.status }}";
+    document.getElementById("inputData").value = "{{ cadastro.data_colheita }}";
+    document.getElementById("inputNome").value = "{{ cadastro.nome_produtor }}";
+    document.getElementById("inputCPF").value = "{{ cadastro.cpf_produtor }}";
+    document.getElementById("inputEmail").value = "{{ cadastro.email_produtor }}";
+    document.getElementById("inputConfEmail").value = "{{ cadastro.email_produtor }}";
+    document.getElementById("inputData").value = "{{ cadastro.data_colheita }}";
+    document.getElementById("inputLat").value = "{{ cadastro.lat_lavoura }}";
+    document.getElementById("inputLong").value = "{{ cadastro.long_lavoura }}";
+    document.getElementById("inputTipo").value = "{{ cadastro.tipo_lavoura }}";
+  }
+  
+  function confirmar_alteracoes_modal(id){
+    bootbox.confirm({
+        message: "Confirmar edições no cadastro?",
+        centerVertical: true,
+        buttons: {
+            confirm: {
+                label: 'Confirmar',
+                className: 'btn-success'
+            },
+            cancel: {
+                label: 'Voltar',
+                className: 'btn-danger'
+            }
+        },
+        callback: function (result) {
+          if (result == true)
+          {
+              document.form_editar.submit();
+          }
+      }
+    });
+};
+
+
+
+
+</script>
+{% endblock %}

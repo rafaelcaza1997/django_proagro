@@ -1,0 +1,114 @@
+{% extends 'proagro_app/base.html' %}
+
+{% block content %}
+
+
+
+<br>
+
+
+<div class = "container col-lg-10 col-md-8 col-sm-10">
+
+    <form method="post">
+        {% csrf_token %}
+        <div class="input-group">
+            <input type="search" class="form-control rounded" placeholder="Buscar por CPF" aria-label="Search" aria-describedby="search-addon" name = "cpf_search" />
+            <button type="submit" class="btn btn-outline-primary">Buscar</button>
+        </div>
+
+    </form>
+<br>
+<br>
+
+{% for cadastro in cadastros %}
+    <div class="accordion my-2" id="accordion_{{ cadastro.id }}">
+    <div class="card">
+        <div class="card-header" id="heading_{{ codigo.id }}">
+            <div type="button" data-toggle="collapse" data-target="#colapse_{{cadastro.id}}" aria-expanded="false" aria-controls="colapse_{{cadastro.id}}">
+
+                <a href="#" class="list-group-item list-group-item-action flex-column">
+                <div class="d-flex w-100 justify-content-between align-items-center">
+
+                    <div class="mb-1 col-2">
+                        <spam class="small">Produtor</spam>
+                        <h5>{{ cadastro.nome_produtor }}</h5>
+                    </div>
+
+                    <div class="mb-1 col-2">
+                        <spam class="small">CPF</spam>
+                        <h6> {{ cadastro.cpf_produtor }}</h6>
+                    </div>             
+                    
+                    <div class="mb-1 col-1">
+                        <spam class="small">Colheita</spam>
+                        <h6><time datetime="YYYY-MM-DD"> {{ cadastro.data_colheita }}</h6>
+                    </div>
+                    <div class="mb-1 col-1">
+                        <spam class="small">Status</spam>
+                        <h6><time datetime="YYYY-MM-DD"> {{ cadastro.status }}</h6>
+                    </div>
+                                    
+                    <div class="d-flex justify-content-center align-items-center">
+                        <i class=" mb-1 col-1 material-icons">{{ cadastro.evento }}</i>
+                    </div>
+
+                    <div class=" mb-1 col-1 btn-group" role="group" aria-label="Basic example">
+                        <button type="button" class="btn btn-info" onclick="window.location='{% url 'view_proagro:editar_cadastro' cadastro.id %}';"><i class="material-icons">edit</i></button>
+                        <button type="button" class="btn btn-danger" onclick="show_delete_modal({{cadastro.id}})"><i class="material-icons">delete</i></button>
+                    </div>
+
+                </div>
+                </a>
+            </div>
+      </div>
+  
+      <div id="colapse_{{cadastro.id}}" class="collapse" aria-labelledby="heading_{{ codigo.id }}" data-parent="#accordion_{{ cadastro.id }}">
+        <div class="card-body">
+            <h5>{{ cadastro.nome_produtor }}</h5>
+            <h6> {{ cadastro.cpf_produtor }}</h6>
+            <h6><time datetime="YYYY-MM-DD"> {{ cadastro.data_colheita }}</h6>
+            <h6><time datetime="YYYY-MM-DD"> {{ cadastro.status }}</h6>
+            <i class=" mb-1 col-1 material-icons">{{ cadastro.evento }}</i>
+        </div>
+      </div>
+    </div>
+    
+    </div>
+
+    {% endfor %}
+
+
+{% endblock %}
+
+
+{% block script %}
+
+<script>
+
+
+    function show_delete_modal(id){
+        bootbox.confirm({
+            message: "Deseja realizar a exlusão do cadastro?",
+            centerVertical: true,
+            buttons: {
+                confirm: {
+                    label: 'Excluir',
+                    className: 'btn-danger'
+                },
+                cancel: {
+                    label: 'Voltar',
+                    className: 'btn'
+                }
+            },
+            callback: function (result) {
+                if (result == true)
+                {
+                    window.location = 'excluir/'+id;
+                }
+            }
+        });
+    };
+
+</script>
+
+{% endblock %}
